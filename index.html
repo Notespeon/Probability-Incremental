@@ -5,15 +5,36 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
-    <title>Incrementime</title>
+    <title>Probability Incremental</title>
 
     <script src=https://cdn.jsdelivr.net/npm/vue/dist/vue.js></script>
     <script src=main.js defer></script>
 </head>
-<body style="background-color:#555">
+<body style="background-color:#444">
     <div id="app">
-        <h1>{{ game.time }} seconds have passed.</h1>
-        <button @click=increment()>Time Passes...</button>
+        <h1 :class="score">{{ game.score.score }}</h1>
+        
+        <div :class="upgradeBox">
+            <div :class="leftBox">
+                <button @click=increaseScoreAttempt()>Increase Score</button>
+                <span>Cost: {{ game.score.cost }}</span>
+                <p>Success Chance: {{ game.score.chance }}% <br><br>
+                    Critical Success Chance: {{ game.score.critSuc }}% <br><br>
+                    Critical Failure Chance: {{ game.score.critFail }}%</p>
+            </div>
+            <div :class="rightBox">
+                <button @click=decreaseScoreAutomation()> - </button>
+                <span> Auto </span>
+                <button @click=increaseScoreAutomation()> + </button>
+                <p>{{ game.score.auto }} autos active, {{game.score.maxAuto}} maximum</p>
+                <p></p>
+                <span>Latest Attempt: </span>
+                <span :class="red">FAIL</span>
+            </div>
+        </div>
+        <div :class="upgradeBox">
+            <button @click=attemptIncrement()>Increase Success Chance</button>
+        </div>
     </div>
 </body>
 </html>

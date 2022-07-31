@@ -1,0 +1,36 @@
+.upgradeBox {
+    border-color: pink;
+    border-radius: 1vw;
+    border-style: solid;
+    height: 10vw;
+    width: 50vw;
+    padding: 1vw;
+    margin: 1vw;
+}
+
+.leftBox {
+    width: 50%;
+    float: left;
+}
+
+.rightBox {
+    width: 50%;
+    float: right;
+}
+
+.red {
+    color: red;
+    display: 'inline-block';
+}
+
+.score {
+    margin: 1vw;
+}
+
+* {
+    color: #FFFFFF
+}
+
+button {
+    color: black
+}

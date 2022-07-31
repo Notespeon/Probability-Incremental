@@ -1,0 +1,27 @@
+Increase Score
+Increase Automation
+Increase Success Chance
+Increase Critical Success Chance
+Decrease Critical Failure Chance
+
+Critical Success:
+- Also needs to be planned around eventually
+- Permanent benefits (e.g. for increase score, increases amount score increases by)
+- On success chance of future critical successes decreases
+
+Critical Failure: 
+- Temporarily stops automation for that square
+- Huge negative consequence (e.g. for increase score resets score to 0)
+- Needs to be planned around
+- No permanent damage
+
+Prestige:
+- High Critical Failure Chance
+- Necessary for unfolding nature, each prestige unlocks a new mechanic
+- Can risk it early or go for 100% safe attempt
+- Critical Failure results in wipe back to start of the prestige
+
+Transcend:
+- Critical Failure results in full game reset?
+- 5 Gates, tap all 5 to progress
+- Succeding in opening a gate has a detrimental effect
