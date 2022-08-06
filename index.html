@@ -1,40 +1,164 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
-    <title>Probability Incremental</title>
+<script src="https://unpkg.com/vue@3"></script>
 
-    <script src=https://cdn.jsdelivr.net/npm/vue/dist/vue.js></script>
-    <script src=main.js defer></script>
-</head>
-<body style="background-color:#444">
-    <div id="app">
-        <h1 :class="score">{{ game.score.score }}</h1>
-        
-        <div :class="upgradeBox">
-            <div :class="leftBox">
-                <button @click=increaseScoreAttempt()>Increase Score</button>
-                <span>Cost: {{ game.score.cost }}</span>
-                <p>Success Chance: {{ game.score.chance }}% <br><br>
-                    Critical Success Chance: {{ game.score.critSuc }}% <br><br>
-                    Critical Failure Chance: {{ game.score.critFail }}%</p>
+<layout>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="styles.css">
+        <title>Probability Incremental</title>
+    </head>
+    <body style="background-color:#444">
+        <div id="app">
+            <h1 :class="score">{{ game.global.score }}</h1>
+            
+            <div :class="upgradeBox">
+                <div :class="leftBox">
+                    <button @click=makeAttempt("score")>Increase Score</button>
+                    <span> Cost: {{ game.score.cost }}</span>
+                    <p>Success Chance: {{ game.score.chance }}% <br><br>
+                        Critical Success Chance: {{ game.score.critSuc }}% <br><br>
+                        Critical Failure Chance: {{ game.score.critFail }}%</p>
+                </div>
+                <div :class="rightBox">
+                    <button @click=decreaseAutomation("score")> - </button>
+                    <span> Auto </span>
+                    <button @click=increaseAutomation("score")> + </button>
+                    <p>{{ game.score.auto }} autos active, {{game.score.maxAuto}} maximum</p>
+                    <p></p>
+                    <span>Latest Attempt: </span>
+                    <span :class="game.score.successColouring">{{ game.score.successText }}</span>
+                </div>
             </div>
-            <div :class="rightBox">
-                <button @click=decreaseScoreAutomation()> - </button>
-                <span> Auto </span>
-                <button @click=increaseScoreAutomation()> + </button>
-                <p>{{ game.score.auto }} autos active, {{game.score.maxAuto}} maximum</p>
-                <p></p>
-                <span>Latest Attempt: </span>
-                <span :class="red">FAIL</span>
+            <div :class="upgradeBox">
+                <div :class="leftBox">
+                    <button @click=makeAttempt("prestige")>Prestige</button>
+                    <span> Cost: {{ game.prestige.cost }}</span>
+                    <p>Success Chance: {{ game.prestige.chance }}% <br><br>
+                        Critical Success Chance: {{ game.prestige.critSuc }}% <br><br>
+                        Critical Failure Chance: {{ game.prestige.critFail }}%</p>
+                </div>
+                <div :class="rightBox">
+                    <button @click=decreaseAutomation("prestige")> - </button>
+                    <span> Auto </span>
+                    <button @click=increaseAutomation("prestige")> + </button>
+                    <p>{{ game.prestige.auto }} autos active, {{game.prestige.maxAuto}} maximum</p>
+                    <p></p>
+                    <span>Latest Attempt: </span>
+                    <span :class="game.prestige.successColouring">{{ game.prestige.successText }}</span>
+                </div>
             </div>
         </div>
-        <div :class="upgradeBox">
-            <button @click=attemptIncrement()>Increase Success Chance</button>
-        </div>
-    </div>
-</body>
-</html>
+    </body>
+</layout>
+
+<script>
+    const { createApp } = Vue
+
+    createApp({
+        components: {
+            //TestComp
+        },
+        data() {
+            return {
+            game: {
+                global: {
+                    score: 0
+                },
+                score: {
+                    chance: 10,
+                    cost: 0,
+                    critSuc: 10,
+                    critFail: 1,
+                    auto: 0,
+                    maxAuto: 1,
+                    successText: 'NONE',
+                    successColouring: {
+                        red: false,
+                        green: false
+                    }
+                },
+                prestige: {
+                    chance: 10,
+                    cost: 1,
+                    critSuc: 10,
+                    critFail: 1,
+                    auto: 0,
+                    maxAuto: 0,
+                    successText: 'NONE',
+                    successColouring: {
+                        red: false,
+                        green: false
+                    }
+                },
+                auto: {
+                    chance: 10
+                }
+            },
+            upgradeBox: 'upgradeBox',
+            score: 'score',
+            leftBox: 'leftBox',
+            rightBox: 'rightBox'
+            }
+        },
+        computed: {
+
+        },
+        methods: {
+            increaseSuccess(type) {
+                if (type == "score") {
+                    this.game.global.score++
+                }
+                this.game[type].successText = 'SUCCESS'
+                this.game[type].successColouring.green = true
+                this.game[type].successColouring.red = false
+            },
+            increaseFailure(type) {
+                this.game[type].successText = 'FAILURE'
+                this.game[type].successColouring.green = false
+                this.game[type].successColouring.red = true
+            },
+            makeAttempt(type) {
+                if (this.game.global.score < this.game[type].cost) {
+                    return;
+                } 
+
+                this.game.global.score -= this.game[type].cost
+
+                if (Math.ceil(Math.random()*100) < this.game[type].chance) {
+                    this.increaseSuccess(type)
+                } else {
+                    this.increaseFailure(type)
+                }
+            },
+            increaseAutomation(type) {
+                switch(type) {
+                    case "score":
+                        if (this.game.score.auto < this.game.score.maxAuto) {
+                            this.game.score.auto++
+                        }
+                    break;
+                    case "prestige":
+                        if (this.game.prestige.auto < this.game.prestige.maxAuto) {
+                            this.game.prestige.auto++
+                        }
+                }
+            },
+            decreaseAutomation(type) {
+                if (this.game.score.auto > 0) {
+                    this.game.score.auto--
+                }
+            },
+            runAutomation() {
+                setInterval(function () {
+                    for (let i = 0; i < app.game.score.auto; i++) {
+                        app.increaseScoreAttempt()
+                    }
+                }, 1000);
+            },
+        },
+        mounted (){
+            //this.runAutomation()
+        }
+    }).mount('#app')
+</script>

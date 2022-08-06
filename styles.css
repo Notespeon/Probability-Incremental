@@ -23,6 +23,11 @@
     display: 'inline-block';
 }
 
+.green {
+    color: green;
+    display: inline-block;
+}
+
 .score {
     margin: 1vw;
 }
