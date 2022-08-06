@@ -18,9 +18,9 @@ export default {
     },
     methods: {
         transformName(typeName) {
-            if (typeName == "chance") {
+            /*if (typeName == "chance") {
                 return "Increase Chance"
-            }
+            }*/
 
             const words = typeName.split(" ")
 

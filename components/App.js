@@ -71,12 +71,16 @@ export default {
             }
 
             if (type == "prestige" && this.game.global.prestigeLevel == 0) {
+                this.game.global.score = 0
                 this.game.global.prestigeLevel++
-                this.game.prestige.chance = 1
+
+                this.game.score.maxAuto = 2
+
+                this.game.prestige.chance = 0
                 this.game.prestige.cost = 10
                 this.game.prestige.critFail = 10 
                 this.game.prestige.maxAuto = 1
-                this.game.score.maxAuto = 2
+                
             }
 
             if (type == "chance") {
@@ -119,14 +123,11 @@ export default {
         },
         runAutomation() {
             setInterval(function () {
-                for (let i = 0; i < this.game.score.auto; i++) {
-                    this.makeAttempt("score")
-                }
-                for (let i = 0; i < this.game.prestige.auto; i++) {
-                    this.makeAttempt("prestige")
-                }
-                for (let i = 0; i < this.game.chance.auto; i++) {
-                    this.makeAttempt("chance")
+                let upgrade = ["score", "prestige", "chance"]
+                for (const type of upgrade) {
+                    for (let i = 0; i < this.game[type].auto; i++) {
+                        this.makeAttempt(type)
+                    }
                 }
             }.bind(this), 1000);
         },
@@ -138,8 +139,8 @@ export default {
     <h1 :class="score">{{ game.global.score }}</h1>
             
     <UpgradeBox typeName = "score" :type = game.score :makeAttempt="makeAttempt" :increaseAutomation="increaseAutomation" :decreaseAutomation="decreaseAutomation"/>
-    <UpgradeBox typeName = "prestige" :type = game.prestige :makeAttempt="makeAttempt" :increaseAutomation="increaseAutomation" :decreaseAutomation="decreaseAutomation"/>
     <UpgradeBox v-if="this.game.global.prestigeLevel > 0" typeName = "chance" :type = game.chance :makeAttempt="makeAttempt" :increaseAutomation="increaseAutomation" :decreaseAutomation="decreaseAutomation"/>
+    <UpgradeBox typeName = "prestige" :type = game.prestige :makeAttempt="makeAttempt" :increaseAutomation="increaseAutomation" :decreaseAutomation="decreaseAutomation"/>
 
     `,
 };
