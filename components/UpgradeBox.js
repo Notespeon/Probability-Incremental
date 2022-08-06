@@ -17,14 +17,26 @@ export default {
         decreaseAutomation: { type: Function }
     },
     methods: {
-        capitalise(typeName) {
-            return typeName.charAt(0).toUpperCase() + typeName.slice(1);
+        transformName(typeName) {
+            if (typeName == "chance") {
+                return "Increase Chance"
+            }
+
+            const words = typeName.split(" ")
+
+            for (var i = 0; i < words.length; i++) {
+                words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1)
+            }
+
+            const output = words.join(" ")
+            
+            return output
         }
     },
     template: /*html*/`
     <div :class="upgradeBox">
         <div :class="leftBox">
-            <button @click=makeAttempt(typeName)>{{ capitalise(typeName) }}</button>
+            <button @click=makeAttempt(typeName)>{{ transformName(typeName) }}</button>
             <span> Cost: {{ type.cost }}</span>
             <p>Success Chance: {{ type.chance }}% <br><br>
                 Critical Success Chance: {{ type.critSuc }}% <br><br>

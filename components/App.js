@@ -1,15 +1,15 @@
-import TestComp from './UpgradeBox.js'
+import UpgradeBox from './UpgradeBox.js'
 
 export default {
     name: 'App',
     components: {
-        TestComp
+        UpgradeBox
     },
     data() {
         return {
             game: {
                 global: {
-                    score: 0,
+                    score: 100,
                     prestigeLevel: 0
                 },
                 score: {
@@ -38,6 +38,19 @@ export default {
                         green: false
                     }
                 },
+                chance: {
+                    chance: 10,
+                    cost: 5,
+                    critSuc: 10,
+                    critFail: 1,
+                    auto: 0,
+                    maxAuto: 1,
+                    successText: 'NONE',
+                    successColouring: {
+                        red: false,
+                        green: false
+                    }
+                },
                 auto: {
                     chance: 10
                 }
@@ -57,11 +70,19 @@ export default {
                 this.game.global.score++
             }
 
-            if (type == "prestige") {
+            if (type == "prestige" && this.game.global.prestigeLevel == 0) {
                 this.game.global.prestigeLevel++
                 this.game.prestige.chance = 1
                 this.game.prestige.cost = 10
                 this.game.prestige.critFail = 10 
+                this.game.prestige.maxAuto = 1
+                this.game.score.maxAuto = 2
+            }
+
+            if (type == "chance") {
+                this.game.score.chance += 1
+                this.game.prestige.chance += 1
+                this.game.chance.chance += 1
             }
 
             this.game[type].successText = 'SUCCESS'
@@ -88,7 +109,7 @@ export default {
         },
         increaseAutomation(type) {
             if (this.game[type].auto < this.game[type].maxAuto) {
-                this.game.score.auto++
+                this.game[type].auto++
             }
         },
         decreaseAutomation(type) {
@@ -104,6 +125,9 @@ export default {
                 for (let i = 0; i < this.game.prestige.auto; i++) {
                     this.makeAttempt("prestige")
                 }
+                for (let i = 0; i < this.game.chance.auto; i++) {
+                    this.makeAttempt("chance")
+                }
             }.bind(this), 1000);
         },
     },
@@ -113,8 +137,9 @@ export default {
     template: /*html*/`
     <h1 :class="score">{{ game.global.score }}</h1>
             
-    <TestComp typeName = "score" :type = game.score :makeAttempt="makeAttempt" :increaseAutomation="increaseAutomation" :decreaseAutomation="decreaseAutomation"/>
-    <TestComp typeName = "prestige" :type = game.prestige :makeAttempt="makeAttempt" :increaseAutomation="increaseAutomation" :decreaseAutomation="decreaseAutomation"/>
+    <UpgradeBox typeName = "score" :type = game.score :makeAttempt="makeAttempt" :increaseAutomation="increaseAutomation" :decreaseAutomation="decreaseAutomation"/>
+    <UpgradeBox typeName = "prestige" :type = game.prestige :makeAttempt="makeAttempt" :increaseAutomation="increaseAutomation" :decreaseAutomation="decreaseAutomation"/>
+    <UpgradeBox v-if="this.game.global.prestigeLevel > 0" typeName = "chance" :type = game.chance :makeAttempt="makeAttempt" :increaseAutomation="increaseAutomation" :decreaseAutomation="decreaseAutomation"/>
 
     `,
 };
