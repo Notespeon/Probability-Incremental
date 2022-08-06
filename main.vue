@@ -1,13 +1,4 @@
 <script>
-import { createApp } from 'vue'
-import App from './App.vue'
-
-const app = createApp({
-
-})
-
-app.mount('#app')
-
 export default {
     components: {
         //TestComp
