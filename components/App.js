@@ -9,7 +9,7 @@ export default {
         return {
             game: {
                 global: {
-                    score: 100,
+                    score: 0,
                     prestigeLevel: 0
                 },
                 score: {
