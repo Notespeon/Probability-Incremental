@@ -39,17 +39,19 @@ export default {
             <button @click=makeAttempt(typeName)>{{ transformName(typeName) }}</button>
             <span> Cost: {{ type.cost }}</span>
             <p>Success Chance: {{ type.chance }}% <br><br>
-                Critical Success Chance: {{ type.critSuc }}% <br><br>
-                Critical Failure Chance: {{ type.critFail }}%</p>
+                Critical Success Chance: {{ type.critSuc }}% <span class="tooltip" :data-tooltip="type.tooltipS">?</span> <br><br>
+                Critical Failure Chance: {{ type.critFail }}% <span class="tooltip" :data-tooltip="type.tooltipF">?</span> </p>
         </div>
         <div :class="rightBox">
             <button @click=decreaseAutomation(typeName)> - </button>
-            <span> Auto ({{ type.auto }}/{{type.maxAuto}}) </span>
+            <span> Auto ({{ type.auto }}/{{ type.maxAuto }}) </span>
             <button @click=increaseAutomation(typeName)> + </button>
+            <span class="tooltip" :data-tooltip="type.tooltip">?</span>
             <!--p>{{ type.auto }} autos active, {{type.maxAuto}} maximum</p-->
             <p></p>
             <span>Latest Attempt: </span>
             <span :class="type.successColouring">{{ type.successText }}</span>
+            <p>Multiplier: {{ type.multi }}</p>
         </div>
     </div>
     `,

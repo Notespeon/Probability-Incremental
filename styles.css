@@ -1,3 +1,33 @@
+.tooltip {
+    float: right;
+    position: relative;
+    background: white;
+    padding: 6px 10px;
+    border-radius: 100%;
+    font-size: 10px;
+    color: black;
+    cursor: help;
+    margin: 0vw 1vw 0vw 0vw;
+}
+
+.tooltip::after {
+    position: absolute;
+    left: 50%;
+    content: attr(data-tooltip);
+    background: #222;
+    color: white;
+    border-radius: 5px;
+    width: 200px;
+    margin-left: 30px;
+    padding: 5px;
+    visibility: hidden;
+    font-size: 15px;
+}
+
+.tooltip:hover::after {
+    visibility: visible;
+}
+
 .upgradeBox {
     border-color: pink;
     border-radius: 1vw;

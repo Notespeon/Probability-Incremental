@@ -27,9 +27,13 @@ export default {
                         green: false,
                         blue: false,
                         black: false
-                    }
+                    },
+                    tooltip: "Increases score",
+                    tooltipS: "Increases score multiplier",
+                    tooltipF: "Removes multiplier, halves score and disables an auto"
                 },
                 prestige: {
+                    multi: 1,
                     baseChance: 10,
                     chance: 10,
                     cost: 1,
@@ -43,7 +47,10 @@ export default {
                         green: false,
                         blue: false,
                         black: false
-                    }
+                    },
+                    tooltip: "Reset all progress to unlock new features",
+                    tooltipS: "Necessary for success if possible",
+                    tooltipF: "Reset all progress without new features"
                 },
                 chance: {
                     multi: 1,
@@ -60,7 +67,10 @@ export default {
                         green: false,
                         blue: false,
                         black: false
-                    }
+                    },
+                    tooltip: "Increases success chance",
+                    tooltipS: "Increases success chance multiplier",
+                    tooltipF: "Removes multiplier, resets a random success chance to the base chance"
                 },
                 critS: {
                     multi: 1,
@@ -77,7 +87,10 @@ export default {
                         green: false,
                         blue: false,
                         black: false
-                    }
+                    },
+                    tooltip: "Increases critical success chance, additionally triggers a mini-prestige",
+                    tooltipS: "Increases critical success chance multiplier",
+                    tooltipF: "Removes multiplier, resets a random critical success chance to the base chance"
                 },
                 auto: {
                     chance: 10
