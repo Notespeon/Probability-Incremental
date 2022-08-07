@@ -10,7 +10,7 @@ export default {
             game: {
                 global: {
                     score: 0,
-                    prestigeLevel: 0
+                    prestigeLevel: 0,
                 },
                 score: {
                     multi: 1,
@@ -62,6 +62,23 @@ export default {
                         black: false
                     }
                 },
+                critS: {
+                    multi: 1,
+                    baseChance: 0,
+                    chance: 0,
+                    cost: 1000,
+                    critSuc: 1,
+                    critFail: 0,
+                    auto: 0,
+                    maxAuto: 1,
+                    successText: 'NONE',
+                    successColouring: {
+                        red: false,
+                        green: false,
+                        blue: false,
+                        black: false
+                    }
+                },
                 auto: {
                     chance: 10
                 }
@@ -95,11 +112,37 @@ export default {
                     this.game.chance.multi = 1
                     this.game.chance.chance = 10
 
-                    this.game.prestige.chance = 0
+                    this.game.prestige.chance = 0 //should be 0, 100 for dev reasons
                     this.game.prestige.baseChance = 0
                     this.game.prestige.cost = 10
                     this.game.prestige.critFail = 100
                     break;
+                case 2:
+                    this.game.global.score = 0 //should be 0, 1000 for dev reasons
+                    this.game.global.prestigeLevel = 2
+
+                    this.game.score.maxAuto = 5
+                    this.game.score.multi = 1
+                    this.game.score.chance = 20
+                    this.game.score.baseChance = 20
+                    this.game.score.critSuc = 1
+                    this.game.score.critFail = 0
+
+                    this.game.chance.maxAuto = 2
+                    this.game.chance.multi = 1
+                    this.game.chance.chance = 10
+                    this.game.chance.baseChance = 10
+                    this.game.chance.critSuc = 1
+                    this.game.chance.critFail = 0
+
+                    this.game.prestige.chance = 100
+                    this.game.prestige.baseChance = 100
+                    this.game.prestige.cost = 10000
+                    this.game.prestige.critSuc = 1
+                    this.game.prestige.critFail = 0
+                    break;
+                case 3:
+                    this.game.global.score = 69696969696969
             }
         },
         attemptSuccess(type) {
@@ -107,16 +150,29 @@ export default {
                 this.game.global.score += this.game.score.multi
             }
 
-            if (type == "prestige" && this.game.global.prestigeLevel == 0) {
-                this.setPrestigeStart(1)
+            if (type == "prestige") {
+                if (this.game.global.prestigeLevel < 2) {
+                    this.setPrestigeStart(this.game.global.prestigeLevel + 1)
+                }
             }
 
             if (type == "chance") {
-                let upgrade = ["score", "chance", "prestige"]
-                for (const type of upgrade) {
-                    this.game[type].chance += this.game.chance.multi
-                    if (this.game[type].chance > 100) {
-                        this.game[type].chance = 100
+                let upgrade = ["score", "chance", "critS", "prestige"]
+                for (const value of upgrade) {
+                    this.game[value].chance += this.game.chance.multi
+                    if (this.game[value].chance > 100) {
+                        this.game[value].chance = 100
+                    }
+                }
+            }
+
+            if (type == "critS") {
+                this.game.critS.chance = this.game.critS.baseChance
+                let upgrade = ["score", "chance", "critS", "prestige"]
+                for (const value of upgrade) {
+                    this.game[value].critSuc += this.game.critS.multi
+                    if (this.game[value].critSuc > 100) {
+                        this.game[value].critSuc = 100
                     }
                 }
             }
@@ -135,6 +191,15 @@ export default {
                 this.attemptSuccess(type)
             }
 
+            if (type == "critS") {
+                this.game.critS.multi++
+                this.attemptSuccess(type)
+            }
+
+            if (type == "prestige") {
+                this.setPrestigeStart(this.game.global.prestigeLevel + 1)
+            }
+
             this.game[type].successText = 'CRITICAL SUCCESS!'
             this.setColour(type, "blue")
         },
@@ -143,7 +208,6 @@ export default {
             this.setColour(type, "red")
         },
         criticalFailure(type) {
-            console.log("CritFail " + type)
             //halves score, resets multi and turns off one auto
             if (type == "score") {
                 this.game.score.multi = 1
@@ -157,7 +221,7 @@ export default {
             if (type == "chance") {
                 this.game.chance.multi = 1
                 this.game.chance.auto = 0
-                let upgrade = ["score", "chance", "prestige"]
+                let upgrade = ["score", "chance", "critS", "prestige"]
                 let unluckyUpgrade = Math.floor(Math.random()*3)
 
                 this.game[upgrade[unluckyUpgrade]].chance = this.game[upgrade[unluckyUpgrade]].baseChance
@@ -165,7 +229,7 @@ export default {
 
             //resets the prestige
             if (type == "prestige") {
-                this.setPrestigeStart(1)
+                this.setPrestigeStart(this.game.global.prestigeLevel)
             }
 
             this.game[type].successText = 'CRITICAL FAILURE!'
@@ -177,6 +241,16 @@ export default {
             } 
 
             this.game.global.score -= this.game[type].cost
+
+            if (type == "critS") {
+                let upgrade = ["score", "chance", "prestige"]
+                for (const value of upgrade) {
+                    this.game[value].chance = this.game[value].baseChance
+                }
+                this.game.score.multi = 1
+                this.game.chance.multi = 1
+                this.game.global.score = 0
+            }
 
             if (Math.floor(Math.random()*100) < this.game[type].chance) {
                 if (Math.floor(Math.random()*100 < this.game[type].critSuc)) {
@@ -204,7 +278,7 @@ export default {
         },
         runAutomation() {
             setInterval(function () {
-                let upgrade = ["score", "chance", "prestige"]
+                let upgrade = ["score", "chance", "critS", "prestige"]
                 for (const type of upgrade) {
                     for (let i = 0; i < this.game[type].auto; i++) {
                         this.makeAttempt(type)
@@ -221,6 +295,7 @@ export default {
             
     <UpgradeBox typeName = "score" :type = game.score :makeAttempt="makeAttempt" :increaseAutomation="increaseAutomation" :decreaseAutomation="decreaseAutomation"/>
     <UpgradeBox v-if="this.game.global.prestigeLevel > 0" typeName = "chance" :type = game.chance :makeAttempt="makeAttempt" :increaseAutomation="increaseAutomation" :decreaseAutomation="decreaseAutomation"/>
+    <UpgradeBox v-if="this.game.global.prestigeLevel > 1" typeName = "critS" :type = game.critS :makeAttempt="makeAttempt" :increaseAutomation="increaseAutomation" :decreaseAutomation="decreaseAutomation"/>
     <UpgradeBox typeName = "prestige" :type = game.prestige :makeAttempt="makeAttempt" :increaseAutomation="increaseAutomation" :decreaseAutomation="decreaseAutomation"/>
 
     `,

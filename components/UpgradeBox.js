@@ -44,9 +44,9 @@ export default {
         </div>
         <div :class="rightBox">
             <button @click=decreaseAutomation(typeName)> - </button>
-            <span> Auto </span>
+            <span> Auto ({{ type.auto }}/{{type.maxAuto}}) </span>
             <button @click=increaseAutomation(typeName)> + </button>
-            <p>{{ type.auto }} autos active, {{type.maxAuto}} maximum</p>
+            <!--p>{{ type.auto }} autos active, {{type.maxAuto}} maximum</p-->
             <p></p>
             <span>Latest Attempt: </span>
             <span :class="type.successColouring">{{ type.successText }}</span>
