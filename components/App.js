@@ -13,6 +13,8 @@ export default {
                     prestigeLevel: 0
                 },
                 score: {
+                    multi: 1,
+                    baseChance: 10,
                     chance: 10,
                     cost: 0,
                     critSuc: 10,
@@ -22,10 +24,13 @@ export default {
                     successText: 'NONE',
                     successColouring: {
                         red: false,
-                        green: false
+                        green: false,
+                        blue: false,
+                        black: false
                     }
                 },
                 prestige: {
+                    baseChance: 10,
                     chance: 10,
                     cost: 1,
                     critSuc: 0,
@@ -35,20 +40,26 @@ export default {
                     successText: 'NONE',
                     successColouring: {
                         red: false,
-                        green: false
+                        green: false,
+                        blue: false,
+                        black: false
                     }
                 },
                 chance: {
+                    multi: 1,
+                    baseChance: 10,
                     chance: 10,
                     cost: 5,
                     critSuc: 10,
-                    critFail: 1,
+                    critFail: 3,
                     auto: 0,
                     maxAuto: 1,
                     successText: 'NONE',
                     successColouring: {
                         red: false,
-                        green: false
+                        green: false,
+                        blue: false,
+                        black: false
                     }
                 },
                 auto: {
@@ -65,38 +76,100 @@ export default {
 
     },
     methods: {
-        increaseSuccess(type) {
+        setColour(type, colour) {
+            this.game[type].successColouring.green = (colour == "green")
+            this.game[type].successColouring.red = (colour == "red")
+            this.game[type].successColouring.blue = (colour == "blue")
+            this.game[type].successColouring.black = (colour == "black")
+        },
+        setPrestigeStart(number) {
+            switch(number) {
+                case 1:
+                    this.game.global.score = 0
+                    this.game.global.prestigeLevel = 1
+
+                    this.game.score.maxAuto = 2
+                    this.game.score.multi = 1
+                    this.game.score.chance = 10
+
+                    this.game.chance.multi = 1
+                    this.game.chance.chance = 10
+
+                    this.game.prestige.chance = 0
+                    this.game.prestige.baseChance = 0
+                    this.game.prestige.cost = 10
+                    this.game.prestige.critFail = 100
+                    break;
+            }
+        },
+        attemptSuccess(type) {
             if (type == "score") {
-                this.game.global.score++
+                this.game.global.score += this.game.score.multi
             }
 
             if (type == "prestige" && this.game.global.prestigeLevel == 0) {
-                this.game.global.score = 0
-                this.game.global.prestigeLevel++
-
-                this.game.score.maxAuto = 2
-
-                this.game.prestige.chance = 0
-                this.game.prestige.cost = 10
-                this.game.prestige.critFail = 10 
-                this.game.prestige.maxAuto = 1
-                
+                this.setPrestigeStart(1)
             }
 
             if (type == "chance") {
-                this.game.score.chance += 1
-                this.game.prestige.chance += 1
-                this.game.chance.chance += 1
+                let upgrade = ["score", "chance", "prestige"]
+                for (const type of upgrade) {
+                    this.game[type].chance += this.game.chance.multi
+                    if (this.game[type].chance > 100) {
+                        this.game[type].chance = 100
+                    }
+                }
             }
 
             this.game[type].successText = 'SUCCESS'
-            this.game[type].successColouring.green = true
-            this.game[type].successColouring.red = false
+            this.setColour(type, "green")
         },
-        increaseFailure(type) {
+        criticalSuccess(type) {
+            if (type == "score") {
+                this.game.score.multi++
+                this.attemptSuccess(type)
+            }
+
+            if (type == "chance") {
+                this.game.chance.multi++
+                this.attemptSuccess(type)
+            }
+
+            this.game[type].successText = 'CRITICAL SUCCESS!'
+            this.setColour(type, "blue")
+        },
+        attemptFailure(type) {
             this.game[type].successText = 'FAILURE'
-            this.game[type].successColouring.green = false
-            this.game[type].successColouring.red = true
+            this.setColour(type, "red")
+        },
+        criticalFailure(type) {
+            console.log("CritFail " + type)
+            //halves score, resets multi and turns off one auto
+            if (type == "score") {
+                this.game.score.multi = 1
+                this.game.global.score = Math.floor(this.game.global.score/2)
+                if (this.game.score.auto > 0) {
+                    this.game.score.auto -= 1
+                }
+            }
+
+            //resets chance multi, resets success chance of a random type and turns off one auto
+            if (type == "chance") {
+                this.game.chance.multi = 1
+                this.game.chance.auto = 0
+                let upgrade = ["score", "chance", "prestige"]
+                let unluckyUpgrade = Math.floor(Math.random()*3)
+
+                this.game[upgrade[unluckyUpgrade]].chance = this.game[upgrade[unluckyUpgrade]].baseChance
+            }
+
+            //resets the prestige
+            if (type == "prestige") {
+                this.setPrestigeStart(1)
+            }
+
+            this.game[type].successText = 'CRITICAL FAILURE!'
+            this.setColour(type, "black")
         },
         makeAttempt(type) {
             if (this.game.global.score < this.game[type].cost) {
@@ -105,10 +178,18 @@ export default {
 
             this.game.global.score -= this.game[type].cost
 
-            if (Math.ceil(Math.random()*100) < this.game[type].chance) {
-                this.increaseSuccess(type)
+            if (Math.floor(Math.random()*100) < this.game[type].chance) {
+                if (Math.floor(Math.random()*100 < this.game[type].critSuc)) {
+                    this.criticalSuccess(type)
+                } else {
+                    this.attemptSuccess(type)
+                }
             } else {
-                this.increaseFailure(type)
+                if (Math.floor(Math.random()*100) < this.game[type].critFail) {
+                    this.criticalFailure(type)
+                } else {
+                    this.attemptFailure(type)
+                }
             }
         },
         increaseAutomation(type) {
@@ -123,7 +204,7 @@ export default {
         },
         runAutomation() {
             setInterval(function () {
-                let upgrade = ["score", "prestige", "chance"]
+                let upgrade = ["score", "chance", "prestige"]
                 for (const type of upgrade) {
                     for (let i = 0; i < this.game[type].auto; i++) {
                         this.makeAttempt(type)

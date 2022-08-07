@@ -28,6 +28,16 @@
     display: inline-block;
 }
 
+.blue {
+    color: blue;
+    display: 'inline-block';
+}
+
+.black {
+    color: black;
+    display: inline-block;
+}
+
 .score {
     margin: 1vw;
 }
