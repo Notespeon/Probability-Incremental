@@ -1,3 +1,8 @@
+Achievements:
+- Auto TakeOver (Reach 100 Score Autos): Adds ++ and -- buttons
+
+
+
 Increase Score
 Increase Automation
 Increase Success Chance

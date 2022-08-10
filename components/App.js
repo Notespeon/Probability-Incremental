@@ -11,9 +11,10 @@ export default {
                 global: {
                     score: 0, //should be 0, 10 for dev reasons
                     prestigeLevel: 0,
+                    version: 0.01
                 },
                 achievements: {
-                    autoTakeOver: false
+
                 },
                 score: {
                     multi: 1,
@@ -35,7 +36,7 @@ export default {
                     },
                     tooltip: "Increases score",
                     tooltipS: "On Success: Chance to increase score multiplier",
-                    tooltipF: "On Faillure: Chance to reset multiplier"
+                    tooltipF: "On Faillure: Chance to reset multiplier (all critical failures additionally disable an auto)"
                 },
                 prestige: {
                     multi: 1,
@@ -58,72 +59,6 @@ export default {
                     tooltip: "Reset all progress to unlock new features",
                     tooltipS: "???",
                     tooltipF: "On Failure: Chance to reset all progress without new features"
-                },
-                chance: {
-                    multi: 1,
-                    baseChance: 10,
-                    chance: 10,
-                    cost: 5,
-                    critS: 10,
-                    baseCritS: 10,
-                    critFail: 3,
-                    auto: 0,
-                    maxAuto: 1,
-                    scrapValue: 10,
-                    successText: 'NONE',
-                    successColouring: {
-                        red: false,
-                        green: false,
-                        blue: false,
-                        black: false
-                    },
-                    tooltip: "Increases success chance",
-                    tooltipS: "On Success: Chance to increase success chance multiplier",
-                    tooltipF: "On Failure: Chance to reset multiplier and reset a random success chance to the base chance"
-                },
-                critS: {
-                    multi: 1,
-                    baseChance: 0,
-                    chance: 0,
-                    cost: 1000,
-                    critS: 1,
-                    baseCritS: 1,
-                    critFail: 0,
-                    auto: 0,
-                    maxAuto: 1,
-                    scrapValue: 10,
-                    successText: 'NONE',
-                    successColouring: {
-                        red: false,
-                        green: false,
-                        blue: false,
-                        black: false
-                    },
-                    tooltip: "Reset some progress to increase critical success chance",
-                    tooltipS: "On Success: Chance to increase critical success chance multiplier",
-                    tooltipF: "On Failure: Chance to reset multiplier and reset a random critical success chance to the base chance"
-                },
-                auto: {
-                    multi: 1,
-                    baseChance: 60,
-                    chance: 60,
-                    cost: 10,
-                    critS: 1,
-                    baseCritS: 1,
-                    critFail: 1,
-                    auto: 0,
-                    maxAuto: 0,
-                    scrapValue: 5,
-                    successText: 'NONE',
-                    successColouring: {
-                        red: false,
-                        green: false,
-                        blue: false,
-                        black: false
-                    },
-                    tooltip: "Increases the max autos of a random upgrade",
-                    tooltipS: "On Success: Chance to increase multiplier",
-                    tooltipF: "On Failure: Chance to reset multiplier and convert all autos into scrap (score)"
                 }
             },
             upgradeBox: 'upgradeBox',
@@ -153,8 +88,28 @@ export default {
                     this.game.score.multi = 1
                     this.game.score.chance = 10
 
-                    this.game.chance.multi = 1
-                    this.game.chance.chance = 10
+                    this.game.chance = {
+                        multi: 1,
+                        baseChance: 10,
+                        chance: 10,
+                        cost: 5,
+                        critS: 10,
+                        baseCritS: 10,
+                        critFail: 3,
+                        auto: 0,
+                        maxAuto: 1,
+                        scrapValue: 10,
+                        successText: 'NONE',
+                        successColouring: {
+                            red: false,
+                            green: false,
+                            blue: false,
+                            black: false
+                        },
+                        tooltip: "Increases success chance",
+                        tooltipS: "On Success: Chance to increase success chance multiplier",
+                        tooltipF: "On Failure: Chance to reset multiplier and reset a random success chance to the base chance"
+                    }
 
                     this.game.prestige.chance = 0 //should be 0, 100 for dev reasons
                     this.game.prestige.baseChance = 0
@@ -183,7 +138,28 @@ export default {
                     this.game.chance.baseCritS = 1
                     this.game.chance.critFail = 0
 
-                    this.game.critS.auto = 0
+                    this.game.critS = {
+                        multi: 1,
+                        baseChance: 0,
+                        chance: 0,
+                        cost: 1000,
+                        critS: 1,
+                        baseCritS: 1,
+                        critFail: 0,
+                        auto: 0,
+                        maxAuto: 1,
+                        scrapValue: 10,
+                        successText: 'NONE',
+                        successColouring: {
+                            red: false,
+                            green: false,
+                            blue: false,
+                            black: false
+                        },
+                        tooltip: "Reset some progress to increase critical success chance",
+                        tooltipS: "On Success: Chance to increase critical success chance multiplier",
+                        tooltipF: "On Failure: Chance to reset multiplier and reset a random critical success chance to the base chance"
+                    }
 
                     this.game.prestige.chance = 100
                     this.game.prestige.baseChance = 100
@@ -224,7 +200,28 @@ export default {
                     this.game.critS.baseCritS = 1
                     this.game.critS.critFail = 1
 
-                    this.game.auto.auto = 0
+                    this.game.auto = {
+                        multi: 1,
+                        baseChance: 60,
+                        chance: 60,
+                        cost: 10,
+                        critS: 1,
+                        baseCritS: 1,
+                        critFail: 1,
+                        auto: 0,
+                        maxAuto: 0,
+                        scrapValue: 5,
+                        successText: 'NONE',
+                        successColouring: {
+                            red: false,
+                            green: false,
+                            blue: false,
+                            black: false
+                        },
+                        tooltip: "Increases the max autos of a random upgrade",
+                        tooltipS: "On Success: Chance to increase multiplier",
+                        tooltipF: "On Failure: Chance to reset multiplier and convert all autos into scrap (score)"
+                    }
 
                     this.game.prestige.chance = 0
                     this.game.prestige.baseChance = 0
@@ -428,6 +425,12 @@ export default {
                     this.attemptFailure(type)
                 }
             }
+
+            //no save scumming on my watch :)
+            if (type == "prestige") {
+                localStorage.setItem('timeIncrementalSave', JSON.stringify(this.game))
+                console.log('Saving...')
+            }
         },
         increaseAutomation(type) {
             if (this.game[type].auto < this.game[type].maxAuto) {
@@ -447,7 +450,16 @@ export default {
         },
         runAutomation() {
             setInterval(function () {
-                let upgrade = ["score", "chance", "critS", "prestige", "auto"]
+                let upgrade = ["score", "prestige"]
+                if (this.game.global.prestigeLevel > 0) {
+                    upgrade.push("chance")
+                }
+                if (this.game.global.prestigeLevel > 1) {
+                    upgrade.push("critS")
+                }
+                if (this.game.global.prestigeLevel > 2) {
+                    upgrade.push("auto")
+                }
                 for (const type of upgrade) {
                     for (let i = 0; i < this.game[type].auto; i++) {
                         this.makeAttempt(type)
@@ -455,9 +467,32 @@ export default {
                 }
             }.bind(this), 1000);
         },
+        /*storeInitialState() {
+            this.initialGameState = this.game
+        },*/
+        saveGameData() {
+            setInterval(function () {
+                localStorage.setItem('timeIncrementalSave', JSON.stringify(this.game))
+                console.log('Saving...')
+            }.bind(this), 15000);
+        },
+        loadSaveData() {
+            if (localStorage.getItem('timeIncrementalSave') === null) {
+                return;
+            }
+            let savegame = JSON.parse(localStorage.getItem('timeIncrementalSave'))
+            console.log(savegame)
+            this.game = savegame
+        },
+        resetGame() {
+            localStorage.removeItem('timeIncrementalSave')
+        }
     },
     mounted (){
+        //this.storeInitialState()
         this.runAutomation()
+        this.loadSaveData()
+        this.saveGameData()
     },
     template: /*html*/`
     <h1 :class="score">{{ game.global.score }}</h1>
@@ -515,5 +550,7 @@ export default {
         :increaseAutomation="increaseAutomation" 
         :decreaseAutomation="decreaseAutomation"/>
 
+        <button @click=resetGame()>Delete SaveFile</button>
     `,
+    
 };
